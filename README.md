@@ -23,7 +23,7 @@ La nostra è una visione di inclusione alimentare, con l'obbiettivo di una diffu
 ## Descrizione piattaforma
 La piattaforma consiste in un network per ristoranti che offrono opzioni senza glutine. 
 
-Nel sito sarà possibile vedere i ristoranti che si sono registrati nel network e per ciascuno vedere che livello di “certificazione senza glutine” possiede (vedere i tipi di badge nella sezione dedicata) oltre che al suo menù ed i suoi dati principali. 
+Nel sito sarà possibile vedere i ristoranti che si sono registrati nel network e per ciascuno vedere che livello di “certificazione senza glutine” possiede  oltre che al suo menù ed i suoi dati principali. 
 
 Nelle pagine dei ristoranti sarà anche possibile accedere alla sezione per fare domande al ristorante. 
 
