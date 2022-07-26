@@ -19,10 +19,10 @@ class Account(Base):
     
     date_joined = Column(TIMESTAMP(timezone=True),
                          server_default=text('now()'))
-    
     last_login = Column(TIMESTAMP(timezone=True),
                         nullable=True)
-    password = Column(String)
-    email = Column(String)
+    
+    password = Column(String(64))
+    email = Column(String(64))
     type_account = Column(Enum(TypeAccount))
     

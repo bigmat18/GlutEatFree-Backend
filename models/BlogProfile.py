@@ -10,10 +10,12 @@ class BlogProfile(Base):
                   ForeignKey("user.account_id", 
                              ondelete="CASCADE"), 
                   primary_key=True)
+    
     instagram_link = Column(String)
     facebook_link = Column(String)
     linkedin_link = Column(String)
     link_site = Column(String)
+    
     phone_number = Column(String(10))
     presetation = Column(String)
     
