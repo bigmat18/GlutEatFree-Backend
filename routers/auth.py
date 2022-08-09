@@ -27,6 +27,7 @@ def login(credentials: LoginSchema, db: Session = Depends(get_db), Authorize: Au
         
     # update last login and save
     user.last_login = datetime.datetime.now()
+    user.access_revoked = False
     db.commit()
     
     # generate new tokens
@@ -58,7 +59,10 @@ def registration(credentials: RegistrationSchema, db: Session = Depends(get_db),
     
 
 
-@router.post('/logout')
+@router.post('/logout', status_code=status.HTTP_200_OK)
 def logout(db: Session = Depends(get_db),
            user: User = Depends(get_current_user)):
-    print(user)
+    # set user logged out and save
+    user.access_revoked = True
+    db.commit()
+    return {"msg": "Logout sucessfull"}

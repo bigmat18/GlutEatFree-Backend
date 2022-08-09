@@ -1,6 +1,5 @@
-from sqlalchemy.orm import relationship
-from database import Base
-from sqlalchemy import Column, String, ForeignKey
+from email.policy import default
+from sqlalchemy import Column, String, ForeignKey, BOOLEAN
 from sqlalchemy.dialects.postgresql import UUID
 from models.Account import Account
 
@@ -15,6 +14,8 @@ class User(Account):
     first_name = Column(String)
     last_name = Column(String)
     image = Column(String, nullable=True)
+    
+    access_revoked = Column(BOOLEAN, default=False)
     
     __mapper_args__ = {
         "polymorphic_identity": "user",
