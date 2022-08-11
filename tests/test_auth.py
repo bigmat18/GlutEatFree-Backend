@@ -5,12 +5,15 @@ from utils.generate_random_string import generate_random_string
 def tokens(client):
     response = client.post('/login', json={"email": "admin@admin.com", 
                                            "password":"admin123456"})
-    yield response.json()
-
+    return response.json()
 
 @pytest.fixture()
-def authorization(tokens):
-    yield {'Authorization': f"Bearer {tokens['access_token']}"}
+def access_authorization(tokens):
+    return {'Authorization': f"Bearer {tokens['access_token']}"}
+    
+@pytest.fixture()
+def refresh_authorization(tokens):
+    return {'Authorization': f"Bearer {tokens['refresh_token']}"}
 
 
 @pytest.mark.parametrize("email, password, status_code",[
@@ -23,8 +26,8 @@ def test_login(client, email, password, status_code):
     assert response.status_code == status_code
     
     
-def test_logout(client, authorization):
-    response = client.post('/logout', headers=authorization)
+def test_logout(client, access_authorization):
+    response = client.get('/logout', headers=access_authorization)
     assert response.status_code == 200
     
 
@@ -37,3 +40,8 @@ def test_registration(client, email, password, first_name, last_name, status_cod
     data = {"email": email, "password": password, "first_name": first_name, "last_name": last_name}
     response = client.post('/registration', json=data)
     assert response.status_code == status_code
+    
+    
+def test_refresh_token(client, refresh_authorization):
+    response = client.get('/token/refresh', headers=refresh_authorization)
+    assert response.status_code == 200

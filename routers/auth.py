@@ -38,7 +38,9 @@ def login(credentials: LoginSchema, db: Session = Depends(get_db), Authorize: Au
 
 
 @router.post('/registration', status_code=status.HTTP_201_CREATED)
-def registration(credentials: RegistrationSchema, db: Session = Depends(get_db), Authorize: AuthJWT = Depends()):
+def registration(credentials: RegistrationSchema,
+                 db: Session = Depends(get_db), 
+                 Authorize: AuthJWT = Depends()):
     
     # check if user altredy exists
     if db.query(User).filter(User.email == credentials.email).first():
@@ -59,10 +61,21 @@ def registration(credentials: RegistrationSchema, db: Session = Depends(get_db),
     
 
 
-@router.post('/logout', status_code=status.HTTP_200_OK)
+@router.get('/logout', status_code=status.HTTP_200_OK)
 def logout(db: Session = Depends(get_db),
            user: User = Depends(get_current_user)):
     # set user logged out and save
     user.access_revoked = True
     db.commit()
     return {"msg": "Logout sucessfull"}
+
+
+@router.get('/token/refresh', status_code=status.HTTP_200_OK)
+def refresh_token(Authorize: AuthJWT = Depends()):
+    # verify refresh token
+    Authorize.jwt_refresh_token_required()
+    
+    # get user_id and create new access token
+    user_id = Authorize.get_jwt_subject()
+    access = Authorize.create_access_token(subject=str(user_id))
+    return {"access_token": access}
