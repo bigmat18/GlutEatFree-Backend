@@ -57,6 +57,9 @@ app.add_middleware(
 
 app.include_router(router)
 
+@app.get(path="/")
+def test():
+    return {"msg": "Hello world"}
 
 # Create admin user
 if not db.query(User).filter(User.email == "admin@admin.com").first():
