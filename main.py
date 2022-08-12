@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database import Base, SessionLocal, engine
-from routers import router
+from routers.Auth import auth_router
 from models.User import User
 
 from fastapi import FastAPI, Request
@@ -55,7 +55,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(router)
+app.include_router(auth_router)
 
 @app.get(path="/")
 def test():

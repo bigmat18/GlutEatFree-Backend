@@ -8,10 +8,10 @@ from utils.get_current_user import get_current_user
 import datetime
 
 
-router = APIRouter(tags=['Authentication'])
+auth_router = APIRouter(tags=['Authentication'])
 
 
-@router.post('/login', status_code=status.HTTP_200_OK)
+@auth_router.post('/login', status_code=status.HTTP_200_OK)
 def login(credentials: LoginSchema, db: Session = Depends(get_db), Authorize: AuthJWT = Depends()):
     
     # check if user exists
@@ -37,7 +37,7 @@ def login(credentials: LoginSchema, db: Session = Depends(get_db), Authorize: Au
 
 
 
-@router.post('/registration', status_code=status.HTTP_201_CREATED)
+@auth_router.post('/registration', status_code=status.HTTP_201_CREATED)
 def registration(credentials: RegistrationSchema,
                  db: Session = Depends(get_db), 
                  Authorize: AuthJWT = Depends()):
@@ -61,7 +61,7 @@ def registration(credentials: RegistrationSchema,
     
 
 
-@router.get('/logout', status_code=status.HTTP_200_OK)
+@auth_router.get('/logout', status_code=status.HTTP_200_OK)
 def logout(db: Session = Depends(get_db),
            user: User = Depends(get_current_user)):
     # set user logged out and save
@@ -70,7 +70,7 @@ def logout(db: Session = Depends(get_db),
     return {"msg": "Logout sucessfull"}
 
 
-@router.get('/token/refresh', status_code=status.HTTP_200_OK)
+@auth_router.get('/token/refresh', status_code=status.HTTP_200_OK)
 def refresh_token(Authorize: AuthJWT = Depends()):
     # verify refresh token
     Authorize.jwt_refresh_token_required()
