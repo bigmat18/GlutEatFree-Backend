@@ -10,6 +10,8 @@ from fastapi_jwt_auth import AuthJWT
 from fastapi_jwt_auth.exceptions import AuthJWTException
 from pydantic import BaseModel
 
+from utils.file_manager import upload_file
+
 
 Base.metadata.create_all(bind=engine)
 app = FastAPI()
@@ -57,8 +59,11 @@ app.add_middleware(
 
 app.include_router(auth_router)
 
-@app.get(path="/")
-def test():
+from fastapi import File, UploadFile
+
+@app.post(path="/")
+def test(file: UploadFile = File()):
+    upload_file(file.file, file.filename.replace(' ', '_'))
     return {"msg": "Hello world"}
 
 # Create admin user

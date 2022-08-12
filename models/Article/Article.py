@@ -48,7 +48,7 @@ class Article(Base):
     
     title = Column(String(64))
     intro = Column(String)
-    image = Column(String)
+    image = Column(String, nullable=True)
     
     created_at = Column(TIMESTAMP(timezone=True),
                         server_default=text('now()'))
@@ -64,3 +64,8 @@ class Article(Base):
     
     tags = relationship("ArticlesTags")
     likes = relationship("ArticlesUsersLike")
+    
+    def __init__(self, title, intro, author_id, image=None):
+        self.title = title
+        self.intro = intro
+        self.author_id = author_id
