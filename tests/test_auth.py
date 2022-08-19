@@ -1,6 +1,7 @@
 import pytest
 from utils.generate_random_string import generate_random_string
 
+
 @pytest.fixture()
 def tokens(client):
     response = client.post('/login', json={"email": "admin@admin.com", 
@@ -31,16 +32,20 @@ def test_logout(client, access_authorization):
     assert response.status_code == 200
     
 
-@pytest.mark.parametrize("email, password, first_name, last_name, status_code",[
-    ("test", "test123456", "test", "test", 422),
-    ("admin@admin.com", "test123456", "test", "test", 400),
-    (f"{generate_random_string(5)}@test.com", "test123456", "test", "test", 201)
-])
-def test_registration(client, email, password, first_name, last_name, status_code):
-    data = {"email": email, "password": password, "first_name": first_name, "last_name": last_name}
-    response = client.post('/registration', json=data)
-    assert response.status_code == status_code
+@pytest.mark.parametrize("email, password, first_name, last_name, image, status_code", [
+    ("test", "test123456", "test", "test", None, 422), # Error email format
+    ("admin@admin.com", "test123456", "test", "test", None, 400), # Error email altredy exists
     
+    (f"{generate_random_string(5)}@test.com", "test123456", "test", "test", None, 201), # correct without image
+        
+    (f"test@test.com", "test123456", f"{generate_random_string(65)}", "test", None, 400), # first_name too long
+    (f"test@test.com", "test123456", "test", f"{generate_random_string(65)}",None, 400) # last_name too long
+])
+def test_registration(client, email, password, first_name, last_name, image, status_code):
+    data = {"email": email, "password": password, "first_name": first_name, "last_name": last_name}
+    response = client.post('/registration', data=data)
+    assert response.status_code == status_code
+
     
 def test_refresh_token(client, refresh_authorization):
     response = client.get('/token/refresh', headers=refresh_authorization)

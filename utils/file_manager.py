@@ -5,6 +5,7 @@ from botocore.client import BaseClient
 AWS_ACCESS_KEY = os.getenv('AWS_ACCESS_KEY', default='AKIA2CTNZ3PLCPDWI37X')
 AWS_SECRET_KEY = os.getenv('AWS_SECRET_KEY', default='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')
 AWS_S3_BUCKET_NAME = os.getenv('AWS_S3_BUCKET_NAME', default='gluteatfree-media-bucket')
+AWS_BUCKET_URL = f"https://{AWS_S3_BUCKET_NAME}.s3.eu-south-1.amazonaws.com"
 
 
 def s3() -> BaseClient:
@@ -17,7 +18,6 @@ def s3() -> BaseClient:
 
 
 def upload_file(file: SpooledTemporaryFile, filename:str, path:str = '') -> str | None:
-    print(type(file))
     if not file: return None
     
     final_path = f"{path}{filename}"
@@ -25,7 +25,7 @@ def upload_file(file: SpooledTemporaryFile, filename:str, path:str = '') -> str 
     client = s3()
     client.upload_fileobj(file, AWS_S3_BUCKET_NAME, final_path)
         
-    return final_path
+    return f"{AWS_BUCKET_URL}/{final_path}" 
 
 
 def delete_file(path: str) -> bool:
