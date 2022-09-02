@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database import Base, SessionLocal, engine
 from routers.auth import auth_router
+from routers.article import article_router
 from models.User import User
 
 from fastapi import FastAPI, Request
@@ -58,13 +59,7 @@ app.add_middleware(
 )
 
 app.include_router(auth_router)
-
-from fastapi import File, UploadFile
-
-@app.post(path="/")
-def test(file: UploadFile = File()):
-    upload_file(file.file, file.filename.replace(' ', '_'))
-    return {"msg": "Hello world"}
+app.include_router(article_router)
 
 # Create admin user
 if not db.query(User).filter(User.email == "admin@admin.com").first():

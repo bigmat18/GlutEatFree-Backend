@@ -1,16 +1,43 @@
-from pydantic import BaseModel, EmailStr
-from typing import Optional
+from datetime import datetime
+from pydantic import BaseModel, EmailStr, UUID4
+from typing import Optional, List
+
 
 class ArticleParagraphImage(BaseModel):
-    pass
+    image: str
+    caption: str | None = None
+    
+    class Config:
+        orm_mode = True
 
 
 class ArticleParagraph(BaseModel):
-    pass
+    title: str
+    content: str
+    images: List[ArticleParagraphImage] = []
+    
+    class Config:
+        orm_mode = True
+
+
+class AuthorSchema(BaseModel):
+    id: UUID4
+    email: EmailStr
+    image: str | None = None
+    
+    class Config:
+        orm_mode = True
 
 
 class ArticleSchema(BaseModel):
     title: str
     intro: str
-    image: bytes | None
+    image: str | None = None
+    updated_at: datetime
+    author: AuthorSchema
+    slug: str
+    paragraphs: List[ArticleParagraphImage] = []
+    
+    class Config:
+        orm_mode = True
     

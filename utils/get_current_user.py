@@ -6,7 +6,7 @@ from fastapi_jwt_auth import AuthJWT
 
 
 def get_current_user(db: Session = Depends(get_db),
-                    Authorize: AuthJWT = Depends()):
+                     Authorize: AuthJWT = Depends()):
     # check jwt token
     Authorize.jwt_required()
     

@@ -7,7 +7,7 @@ class ArticleTag(Base):
     __tablename__ = "article_tag"
     
     id = Column(UUID(as_uuid=True), 
-                dafault=uuid.uuid4,
+                default=uuid.uuid4, 
                 primary_key=True)
     
     name = Column(String(64))
