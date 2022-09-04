@@ -3,7 +3,8 @@ from pydantic import BaseModel, EmailStr, UUID4
 from typing import Optional, List
 
 
-class ArticleParagraphImage(BaseModel):
+class ArticleParagraphImageSchema(BaseModel):
+    id: UUID4
     image: str
     caption: str | None = None
     
@@ -11,10 +12,11 @@ class ArticleParagraphImage(BaseModel):
         orm_mode = True
 
 
-class ArticleParagraph(BaseModel):
+class ArticleParagraphSchema(BaseModel):
+    id: UUID4
     title: str
     content: str
-    images: List[ArticleParagraphImage] = []
+    images: List[ArticleParagraphImageSchema] = []
     
     class Config:
         orm_mode = True
@@ -36,7 +38,7 @@ class ArticleSchema(BaseModel):
     updated_at: datetime
     author: AuthorSchema
     slug: str
-    paragraphs: List[ArticleParagraphImage] = []
+    paragraphs: List[ArticleParagraphSchema] = []
     
     class Config:
         orm_mode = True

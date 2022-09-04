@@ -19,3 +19,8 @@ class ArticleParagraphImage(Base):
                                      ondelete="CASCADE"))
     
     paragraph = relationship("ArticleParagraph")
+    
+    def __init__(self, image, paragraph_id, caption=None):
+        self.image = image
+        self.caption = caption
+        self.paragraph_id = paragraph_id

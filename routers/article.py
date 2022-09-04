@@ -1,6 +1,5 @@
 from datetime import datetime
 from fastapi import APIRouter, Depends, status, Form, HTTPException
-from utils.file_manager import upload_file
 from sqlalchemy.orm import Session
 from schemas.article import ArticleSchema
 from models.User import User
@@ -15,7 +14,7 @@ from utils.file_manager import upload_file, delete_file, AWS_BUCKET_URL
 
 article_router = APIRouter(tags=["Article"])
 
-def get_article(slug, db):
+def get_article(slug: str, db: Session) -> Article:
     article = db.query(Article).filter(Article.slug == slug).first()
     if not article: 
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,

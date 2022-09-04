@@ -6,6 +6,9 @@ from sqlalchemy import Column, String, Integer, ForeignKey, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID
 from .ArticleTag import ArticleTag
 from utils.generate_slug import generate_slug
+from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
+from database import SessionLocal
+from .ArticleParagraph import ArticleParagraph
 import uuid
 
 
@@ -83,3 +86,8 @@ class Article(Base):
         else:
             slug_split = self.slug.split("-")
             self.slug = f"{title}-{slug_split[1]}"
+            
+    @hybrid_property
+    def paragraphs(self):
+        db = SessionLocal()
+        return db.query(ArticleParagraph).filter(ArticleParagraph.article_id == self.id).all()
