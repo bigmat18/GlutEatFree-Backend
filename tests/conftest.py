@@ -4,6 +4,8 @@ from database import get_db, Base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
+from models.Articles.Article import Article
+from models.User import User
 import pytest
 
 
@@ -54,5 +56,39 @@ def access_authorization(tokens):
     
     
 @pytest.fixture()
+def unauth_authorization(client, user_base):
+    response = client.post('/login', json={"email": user_base.email,"password": user_base.password})
+    return {'Authorization': f"Bearer {response.json()['access_token']}"}
+    
+    
+@pytest.fixture()
 def refresh_authorization(tokens):
     return {'Authorization': f"Bearer {tokens['refresh_token']}"}
+
+
+@pytest.fixture()
+def user(session):
+    user = session.query(User).filter(User.email == "admin@admin.com").first()
+    return user
+
+
+@pytest.fixture()
+def user_base(session):
+    user = session.query(User).filter(User.email == "test@test.com").first()
+    if not user:
+        user = User(password="test", email="test@test.com")
+        session.add(user)
+        session.commit()
+        session.refresh(user)
+    return user
+
+
+@pytest.fixture()
+def article(session, user):
+    test = session.query(Article).filter(Article.title == "test").first()
+    if test: return test
+    article = Article(title="test", intro="test", author_id=user.id)
+    session.add(article)
+    session.commit()
+    session.refresh(article)
+    return article

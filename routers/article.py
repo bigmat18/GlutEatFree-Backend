@@ -22,6 +22,12 @@ def get_article(slug: str, db: Session) -> Article:
     return article
 
 
+def check_user_has_permissions(user: User, article: Article):
+    if article.author_id != user.id and user.type_account != "ADMIN":
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, 
+                            detail="Soltato l'autore o un admin può elimiare l'articolo")
+
+
 @article_router.post(
     path="/articles", 
     status_code=status.HTTP_201_CREATED, 
@@ -75,11 +81,8 @@ def article_update(article_slug: str, title: Optional[constr(max_length=64)] = F
                    db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     article = get_article(article_slug, db)
     
-    
     # Check if user is author or admin user
-    if article.author_id != user.id and user.type_account != "ADMIN":
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, 
-                            detail="Soltato l'autore o un admin può elimiare l'articolo")
+    check_user_has_permissions(user, article)
     
     # aply changes to article
     if title: 
@@ -109,9 +112,7 @@ def article_delete(article_slug: str, db: Session = Depends(get_db),
     article = get_article(article_slug, db)
     
     # Check if user is author or admin user
-    if article.author_id != user.id and user.type_account != "ADMIN":
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, 
-                            detail="Soltato l'autore o un admin può elimiare l'articolo")
+    check_user_has_permissions(user, article)
         
     # Delete image in bucket
     if article.image:

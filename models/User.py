@@ -21,7 +21,7 @@ class User(Account):
         "polymorphic_identity": "user",
     }
     
-    def __init__(self, password, email, first_name, last_name, image=None, type_account=None):
+    def __init__(self, password, email, first_name="", last_name="", image=None, type_account=None):
         super().__init__(password, email, type_account)
         self.first_name = first_name
         self.last_name = last_name

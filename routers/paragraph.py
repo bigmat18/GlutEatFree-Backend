@@ -8,9 +8,9 @@ from models.Articles.ArticleParagraphImage import ArticleParagraphImage
 from database import get_db
 from fastapi import File, UploadFile
 from utils.get_current_user import get_current_user
-from typing import List, Optional
+from typing import List
 from utils.file_manager import delete_file, upload_file, AWS_BUCKET_URL
-from .article import get_article
+from .article import get_article, check_user_has_permissions
 
 
 paragraph_router = APIRouter(tags=["Paragraph"])
@@ -39,6 +39,9 @@ def paragraph_create(article_slug: str, title: str = Form(), content: str = Form
                      user: User = Depends(get_current_user)):
     
     article = get_article(article_slug, db)
+    
+    # Check if user is author or admin user
+    check_user_has_permissions(user, article)
 
     # create paragraph and save it
     paragraph = ArticleParagraph(title=title, content=content, article_id=article.id)
@@ -91,6 +94,9 @@ def paragraph_update(paragraph_id: str, title: str = Form(default=None), content
     # get paragraph
     paragraph = get_paragraph(paragraph_id, db)
     
+    # Check if user is author or admin user
+    check_user_has_permissions(user, paragraph.article)
+    
     # update field send
     if title: paragraph.title = title
     if content: paragraph.content = content
@@ -116,6 +122,9 @@ def paragraph_delete(paragraph_id: str,
                      user: User = Depends(get_current_user)):
     paragraph = get_paragraph(paragraph_id, db)
     
+    # Check if user is author or admin user
+    check_user_has_permissions(user, paragraph.article)
+    
     # for all image of paragraph remove it in AWS bucket
     for el in db.query(ArticleParagraphImage).filter(ArticleParagraphImage.paragraph_id == paragraph.id).all():
         delete_file(el.image.replace(AWS_BUCKET_URL + "/", ''))
@@ -133,6 +142,9 @@ def paragraph_image_delete(image_id: str,
                            user: User = Depends(get_current_user)):
     image = get_paragraph_image(image_id, db)
     
+    # Check if user is author or admin user
+    check_user_has_permissions(user, image.paragraph.article)
+    
     # remove file from AWS S3 bucket
     delete_file(image.image.replace(AWS_BUCKET_URL + "/", ''))
     
@@ -149,6 +161,10 @@ def paragraph_image_create(paragraph_id: str,
                            db: Session = Depends(get_db),
                            user: User = Depends(get_current_user)):
     paragraph = get_paragraph(paragraph_id, db)
+
+    # Check if user is author or admin user
+    check_user_has_permissions(user, paragraph.article)
+    
     response = []
     
     # for all images send get it
@@ -178,6 +194,10 @@ def paragraph_image_update(image_id: str, caption: str = Form(),
                            db: Session = Depends(get_db),
                            user: User = Depends(get_current_user)):
     image = get_paragraph_image(image_id, db)
+    
+    # Check if user is author or admin user
+    check_user_has_permissions(user, image.paragraph.article)
+    
     # update caption
     image.caption = caption
     
