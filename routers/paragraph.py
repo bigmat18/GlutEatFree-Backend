@@ -73,7 +73,7 @@ def paragraph_create(article_slug: str, title: str = Form(), content: str = Form
     return paragraph
 
 
-@paragraph_router.get(path="/article/{article_slug}/paragraphs", status_code=status.HTTP_201_CREATED, response_model=List[ArticleParagraphSchema])
+@paragraph_router.get(path="/article/{article_slug}/paragraphs", status_code=status.HTTP_200_OK, response_model=List[ArticleParagraphSchema])
 def paragraph_list(article_slug: str,
                    db: Session = Depends(get_db),
                    user: User = Depends(get_current_user)):
@@ -87,7 +87,7 @@ def paragraph_list(article_slug: str,
              
 
 @paragraph_router.patch(path="/article/paragraph/{paragraph_id}", status_code=status.HTTP_200_OK, response_model=ArticleParagraphSchema)
-def paragraph_update(paragraph_id: str, title: str = Form(default=None), content: str = Form(str),
+def paragraph_update(paragraph_id: str, title: str = Form(default=None), content: str = Form(default=None),
                      db: Session = Depends(get_db),
                      user: User = Depends(get_current_user)):
     

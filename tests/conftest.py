@@ -5,6 +5,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from models.Articles.Article import Article
+from models.Articles.ArticleParagraph import ArticleParagraph, ArticleParagraphImage
 from models.User import User
 import pytest
 
@@ -85,10 +86,32 @@ def user_base(session):
 
 @pytest.fixture()
 def article(session, user):
-    test = session.query(Article).filter(Article.title == "test").first()
-    if test: return test
-    article = Article(title="test", intro="test", author_id=user.id)
-    session.add(article)
-    session.commit()
-    session.refresh(article)
+    article = session.query(Article).filter(Article.title == "test").first()
+    if not article:
+        article = Article(title="test", intro="test", author_id=user.id)
+        session.add(article)
+        session.commit()
+        session.refresh(article)
     return article
+
+
+@pytest.fixture()
+def paragraph(session, article):
+    paragraph = session.query(ArticleParagraph).filter(ArticleParagraph.title == "test").first()
+    if not paragraph:
+        paragraph = ArticleParagraph(title="test", content="test", article_id=article.id)
+        session.add(paragraph)
+        session.commit()
+        session.refresh(paragraph)
+    return paragraph
+
+
+@pytest.fixture()
+def paragraph_image(session, paragraph):
+    image = session.query(ArticleParagraphImage).filter(ArticleParagraphImage.caption == "test").first()
+    if not image:
+        image = ArticleParagraphImage(caption="test", image="url/test", paragraph_id=paragraph.id)
+        session.add(image)
+        session.commit()
+        session.refresh(image)
+    return image
