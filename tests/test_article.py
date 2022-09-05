@@ -1,6 +1,5 @@
 import pytest
 from utils.generate_random_string import generate_random_string
-from models.Articles.Article import Article
 
 
 def test_article_list(client, access_authorization):
@@ -51,3 +50,18 @@ def test_article_delete(client, access_authorization, article):
 def test_article_delete_unauth(client, unauth_authorization, article):
     response = client.delete(f'/article/{article.slug}', headers=unauth_authorization)
     assert response.status_code == 401
+    
+    
+@pytest.mark.parametrize("status_code", [(201),(400)])
+def test_article_like(client, status_code, access_authorization, article):
+    response = client.post(f'/article/{article.slug}/likes', headers=access_authorization)
+    assert response.status_code == status_code
+    
+@pytest.mark.parametrize("status_code", [(204),(400)])
+def test_article_unlike(client, status_code, access_authorization, article):
+    response = client.delete(f'/article/{article.slug}/likes', headers=access_authorization)
+    assert response.status_code == status_code
+
+    
+    
+

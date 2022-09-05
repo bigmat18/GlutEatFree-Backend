@@ -1,9 +1,6 @@
-from re import M
 import pytest
 
-
 def test_paragraph_create(client, access_authorization, article):
-        
     response = client.post(f"/article/{article.slug}/paragraphs", 
                             files={"images": ("filename", open("information.txt", "rb"), "image/jpeg")},
                             data={"title": "test", "content": "test", "captions": ["test"]},

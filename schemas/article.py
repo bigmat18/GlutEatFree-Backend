@@ -39,6 +39,7 @@ class ArticleSchema(BaseModel):
     author: AuthorSchema
     slug: str
     paragraphs: List[ArticleParagraphSchema] = []
+    likes: int
     
     class Config:
         orm_mode = True

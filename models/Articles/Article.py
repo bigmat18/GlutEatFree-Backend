@@ -29,6 +29,11 @@ class ArticlesUsersLike(Base):
                        server_default=text('now()'))
     
     
+    def __init__(self, article_id, user_id):
+        self.article_id = article_id
+        self.user_id = user_id
+    
+    
 class ArticlesTags(Base):
     __tablename__ = "articles_tags"
     
@@ -69,7 +74,6 @@ class Article(Base):
     slug = Column(String, unique=True)
     
     tags = relationship("ArticlesTags")
-    likes = relationship("ArticlesUsersLike")
     author = relationship("User")
     
     __table_args__ = (UniqueConstraint('slug', name='slug_unique_constraint'),)
@@ -91,3 +95,8 @@ class Article(Base):
     def paragraphs(self):
         db = SessionLocal()
         return db.query(ArticleParagraph).filter(ArticleParagraph.article_id == self.id).all()
+    
+    @hybrid_property
+    def likes(self):
+        db = SessionLocal()
+        return db.query(ArticlesUsersLike).filter(ArticlesUsersLike.article_id == self.id).count()

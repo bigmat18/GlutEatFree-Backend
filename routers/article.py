@@ -3,13 +3,14 @@ from fastapi import APIRouter, Depends, status, Form, HTTPException
 from sqlalchemy.orm import Session
 from schemas.article import ArticleSchema
 from models.User import User
-from models.Articles.Article import Article
+from models.Articles.Article import Article, ArticlesUsersLike
 from database import get_db
 from fastapi import File, UploadFile
 from utils.get_current_user import get_current_user
 from typing import List, Optional
 from pydantic import constr
 from utils.file_manager import upload_file, delete_file, AWS_BUCKET_URL
+from sqlalchemy import and_
 
 
 article_router = APIRouter(tags=["Article"])
@@ -125,3 +126,38 @@ def article_delete(article_slug: str, db: Session = Depends(get_db),
     return {"msg": "Articolo eliminato"}
 
 
+@article_router.post(path="/article/{article_slug}/likes", status_code=status.HTTP_201_CREATED)
+def article_like_create(article_slug: str, db: Session = Depends(get_db),
+                        user: User = Depends(get_current_user)):
+    article = get_article(article_slug, db)
+    
+    if db.query(ArticlesUsersLike)\
+         .filter(and_(ArticlesUsersLike.article_id == article.id, ArticlesUsersLike.user_id == user.id))\
+         .first():
+             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                                 detail="Like già inserito da questo utente")
+    
+    like = ArticlesUsersLike(user_id=user.id, article_id=article.id)
+    db.add(like)
+    db.commit()
+    db.refresh(like)
+    
+    return {"msg": "Like aggiunto"}
+
+
+@article_router.delete(path="/article/{article_slug}/likes", status_code=status.HTTP_204_NO_CONTENT)
+def article_like_delete(article_slug: str, db: Session = Depends(get_db),
+                        user: User = Depends(get_current_user)):
+    article = get_article(article_slug, db)
+    
+    like = db.query(ArticlesUsersLike)\
+         .filter(and_(ArticlesUsersLike.article_id == article.id, ArticlesUsersLike.user_id == user.id))\
+         .first()
+
+    if not like: raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                                     detail="Like non esistente") 
+    
+    db.delete(like)
+    db.commit()
+    
+    return {"msg": "Like rimosso"}
