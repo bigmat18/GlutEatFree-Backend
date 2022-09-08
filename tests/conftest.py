@@ -6,6 +6,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from models.Articles.Article import Article
 from models.Articles.ArticleParagraph import ArticleParagraph, ArticleParagraphImage
+from models.Articles.ArticleComment import ArticleComment
 from models.User import User
 import pytest
 
@@ -115,3 +116,14 @@ def paragraph_image(session, paragraph):
         session.commit()
         session.refresh(image)
     return image
+
+
+@pytest.fixture()
+def comment(session, article, user):
+    comment = session.query(ArticleComment).filter(ArticleComment.content == "test").first()
+    if not comment:
+        comment = ArticleComment(content="test", article_id=article.id, author_id=user.id)
+        session.add(comment)
+        session.commit()
+        session.refresh(comment)
+    return comment
