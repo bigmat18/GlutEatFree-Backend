@@ -29,6 +29,16 @@ class AuthorSchema(BaseModel):
     
     class Config:
         orm_mode = True
+        
+        
+class ArticleCommentSchema(BaseModel):
+    id: UUID4 | None = None
+    author: AuthorSchema | None = None
+    content: str
+    update_at: datetime | None = None
+
+    class Config:
+        orm_mode = True
 
 
 class ArticleSchema(BaseModel):
