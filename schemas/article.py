@@ -1,12 +1,12 @@
 from datetime import datetime
 from pydantic import BaseModel, EmailStr, UUID4
-from typing import List
+from typing import List, Union
 
 
 class ArticleParagraphImageSchema(BaseModel):
     id: UUID4
     image: str
-    caption: str | None = None
+    caption: Union[str, None] = None
     
     class Config:
         orm_mode = True
@@ -25,7 +25,7 @@ class ArticleParagraphSchema(BaseModel):
 class AuthorSchema(BaseModel):
     id: UUID4
     email: EmailStr
-    image: str | None = None
+    image: Union[str, None] = None
     
     class Config:
         orm_mode = True
@@ -33,9 +33,9 @@ class AuthorSchema(BaseModel):
 
 class ArticleCommentSchema(BaseModel):
     id: UUID4 | None = None
-    author: AuthorSchema | None = None
+    author: Union[AuthorSchema, None] = None
     content: str
-    updated_at: datetime | None = None
+    updated_at: Union[datetime, None] = None
 
     class Config:
         orm_mode = True
@@ -44,7 +44,7 @@ class ArticleCommentSchema(BaseModel):
 class ArticleSchema(BaseModel):
     title: str
     intro: str
-    image: str | None = None
+    image: Union[str, None] = None
     updated_at: datetime
     author: AuthorSchema
     slug: str
