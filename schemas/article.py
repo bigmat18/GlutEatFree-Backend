@@ -32,7 +32,7 @@ class AuthorSchema(BaseModel):
 
 
 class ArticleCommentSchema(BaseModel):
-    id: UUID4 | None = None
+    id: Union[UUID4, None] = None
     author: Union[AuthorSchema, None] = None
     content: str
     updated_at: Union[datetime, None] = None
