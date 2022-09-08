@@ -1,7 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database import Base, SessionLocal, engine
-from routers.Auth import router
+
+from routers.auth import auth_router
+from routers.article import article_router
+from routers.paragraph import paragraph_router
+from routers.comment import comment_router
+
 from models.User import User
 
 from fastapi import FastAPI, Request
@@ -9,6 +14,8 @@ from fastapi.responses import JSONResponse
 from fastapi_jwt_auth import AuthJWT
 from fastapi_jwt_auth.exceptions import AuthJWTException
 from pydantic import BaseModel
+
+from utils.file_manager import upload_file
 
 
 Base.metadata.create_all(bind=engine)
@@ -55,11 +62,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(router)
-
-@app.get(path="/")
-def test():
-    return {"msg": "Hello world"}
+app.include_router(auth_router)
+app.include_router(article_router)
+app.include_router(paragraph_router)
+app.include_router(comment_router)
 
 # Create admin user
 if not db.query(User).filter(User.email == "admin@admin.com").first():

@@ -17,8 +17,13 @@ class ArticleComment(Base):
     updated_at = Column(TIMESTAMP(timezone=True),
                         server_default=text('now()'))
     
-    author_id = Column(UUID(as_uuid=True), ForeignKey("user.id", ondelete="CASCADE"))
+    author_id = Column(UUID(as_uuid=True), ForeignKey("user.account_id", ondelete="CASCADE"))
     article_id = Column(UUID(as_uuid=True), ForeignKey("article.id", ondelete="CASCADE"))
     
     author = relationship("User")
     article = relationship("Article")
+    
+    def __init__(self, content, author_id, article_id):
+        self.content = content
+        self.author_id = author_id
+        self.article_id = article_id
