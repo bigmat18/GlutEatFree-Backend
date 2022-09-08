@@ -1,6 +1,7 @@
 import os, boto3
 from tempfile import SpooledTemporaryFile
 from botocore.client import BaseClient
+from typing import Union
 
 AWS_ACCESS_KEY = os.getenv('AWS_ACCESS_KEY', default='AKIA2CTNZ3PLCPDWI37X')
 AWS_SECRET_KEY = os.getenv('AWS_SECRET_KEY', default='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')
@@ -17,7 +18,7 @@ def s3() -> BaseClient:
     return client
 
 
-def upload_file(file: SpooledTemporaryFile, filename:str, path:str = '') -> str:
+def upload_file(file: SpooledTemporaryFile, filename:str, path:str = '') -> Union[str, None]:
     if not file: return None
     
     final_path = f"{path}{filename}"
