@@ -17,7 +17,7 @@ def s3() -> BaseClient:
     return client
 
 
-def upload_file(file: SpooledTemporaryFile, filename:str, path:str = '') -> str | None:
+def upload_file(file: SpooledTemporaryFile, filename:str, path:str = '') -> str:
     if not file: return None
     
     final_path = f"{path}{filename}"
