@@ -70,7 +70,9 @@ def comment_update(new_comment: ArticleCommentSchema,
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail="Soltato il creatore del commento può modificarlo")
     
-    if comment.content: comment.content = new_comment.content
+    if comment.content: 
+        comment.content = new_comment.content
+        comment.updated_at = datetime.now()
     
     db.commit()
     db.refresh(comment)

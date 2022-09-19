@@ -3,6 +3,14 @@ from pydantic import BaseModel, EmailStr, UUID4
 from typing import List, Union
 
 
+class ArticleTagSchema(BaseModel):
+    id: Union[UUID4, None]
+    name: str
+    
+    class Config:
+        orm_mode = True
+
+
 class ArticleParagraphImageSchema(BaseModel):
     id: UUID4
     image: str
@@ -32,7 +40,7 @@ class AuthorSchema(BaseModel):
 
 
 class ArticleCommentSchema(BaseModel):
-    id: UUID4 | None = None
+    id: Union[UUID4, None] = None
     author: Union[AuthorSchema, None] = None
     content: str
     updated_at: Union[datetime, None] = None

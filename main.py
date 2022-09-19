@@ -6,6 +6,7 @@ from routers.auth import auth_router
 from routers.article import article_router
 from routers.paragraph import paragraph_router
 from routers.comment import comment_router
+from routers.tag import tag_rounter
 
 from models.User import User
 
@@ -66,6 +67,7 @@ app.include_router(auth_router)
 app.include_router(article_router)
 app.include_router(paragraph_router)
 app.include_router(comment_router)
+app.include_router(tag_rounter)
 
 # Create admin user
 if not db.query(User).filter(User.email == "admin@admin.com").first():
