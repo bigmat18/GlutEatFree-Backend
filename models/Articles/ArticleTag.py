@@ -11,3 +11,6 @@ class ArticleTag(Base):
                 primary_key=True)
     
     name = Column(String(64))
+    
+    def __init__(self, name):
+        self.name = name
